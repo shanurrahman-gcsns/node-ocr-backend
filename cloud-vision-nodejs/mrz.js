@@ -2,8 +2,8 @@ const parse = require('mrz').parse;
 
 
 const extractMrzCode = (description) => {
-    const start = description.indexOf("<");
-    let mrz = description.slice(start-1).trim().replace("\n", ":");
+    const start = description.indexOf("P<");
+    let mrz = description.slice(start).trim().replace("\n", ":");
 
     const indexOfSpace = mrz.indexOf(" ");
     let s1 = mrz.slice(0, indexOfSpace)
