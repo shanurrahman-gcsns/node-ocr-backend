@@ -18,13 +18,13 @@ const findSimilarity = (extractedDocs, fulltext) => {
         const simi = stringSimilarity.findBestMatch(document, bag);
 
 
-        if(simi.bestMatch.rating > 0.5) {
+        if(simi.bestMatch.rating > 0.7) {
             dict[document] = simi.bestMatch.target;
         }
     })
 
 
-    fs.writeFileSync('similar.json', JSON.stringify(dict));
+    // fs.writeFileSync('similar.json', JSON.stringify(dict));
 
     return dict;
 

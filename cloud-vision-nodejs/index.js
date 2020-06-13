@@ -17,23 +17,20 @@ const replaceSimilar = require('./replaceSimilar');
 
 var app = express();
 
-app.get('/', function(req, res) {
-  res.writeHead(200, {
-    'Content-Type': 'text/html'
-  });
-  res.end(form);
+
+app.use(express.static(path.join(__dirname, "public")));
+app.get('/passport', function(req, res) {
+  res.sendFile("public/index.html", { root: __dirname });
 });
 
-// Get the uploaded image
-// Image is uploaded to req.file.path
-app.post('/upload', upload.single('image'), async function(req, res, next) {
+app.post('/passport/upload', upload.single('image'), async function(req, res, next) {
   
     const client = new vision.ImageAnnotatorClient({
       keyFilename: 'secrets.json'
     });
   
     const [result] = await client.textDetection(path.join(__dirname, 'uploads', req.file.filename));
-    fs.writeFileSync('output.json', JSON.stringify(result));
+    // fs.writeFileSync('output.json', JSON.stringify(result));
   
     if(!result.fullTextAnnotation) {
       return res.status(500).send({error: "No text block found", result});
@@ -56,5 +53,7 @@ app.post('/upload', upload.single('image'), async function(req, res, next) {
     }
 });
 
-app.listen(1234);
-console.log('Server Started');
+
+const port = 9659;
+app.listen(port);
+console.log('Server Started at port', port);

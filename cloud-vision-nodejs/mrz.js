@@ -3,30 +3,29 @@ const parse = require('mrz').parse;
 
 const extractMrzCode = (description) => {
     const start = description.indexOf("P<");
-    let mrz = description.slice(start).trim().replace("\n", ":");
+    let mrzCode = description.slice(start).trim().replace(/\s/g, "");
 
-    const indexOfSpace = mrz.indexOf(" ");
-    let s1 = mrz.slice(0, indexOfSpace)
-    let s2 = mrz.slice(indexOfSpace);
-    return `${s1}\n${s2}`;
+    return mrzCode;
 };
 
 
 const runner = (mrzCode) => {
-    let [firstLine, secondLine] = mrzCode.split(":");
+    let lines = [];
+    // in case of post timeout
+    // while(mrzCode.length < 88) {
+    //     console.log("appending <")
+    //     mrzCode+="<";
+    // }
 
-    // this should be avoided at all cost, this is just a weird trick
-    if(secondLine.length === 45){
-        const remove = secondLine.lastIndexOf("<");
-        secondLine = secondLine.slice(0, remove) + secondLine.slice(remove+1);
-
+    console.log("mrzCode length", mrzCode.length)
+    if(mrzCode.length === 88) {
+        lines = mrzCode.match(/.{1,44}/g)
+    }else if(mrzCode.length === 90) {
+        lines = mrzCode.match(/.{1, 30}/g)
     }
-    // firstLine = firstLine.replace(/ /, "")
-    // secondLine = secondLine.replace(/ /, "");
 
-    console.log(firstLine,"\n", secondLine)
-    let result = parse([firstLine, secondLine]);
-    return {...result, firstLine, secondLine};
+    let result = parse(lines);
+    return result;
 }
 
 
