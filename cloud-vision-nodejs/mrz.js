@@ -9,13 +9,16 @@ const extractMrzCode = (description) => {
 };
 
 
-const runner = (mrzCode) => {
+const runner = (mrzCode, initiatePostTimeout) => {
     let lines = [];
-    // in case of post timeout
-    // while(mrzCode.length < 88) {
-    //     console.log("appending <")
-    //     mrzCode+="<";
-    // }
+
+    if(initiatePostTimeout && mrzCode.length >=86) {
+        console.log("in post timeout");
+        while(mrzCode.length < 88) {
+            console.log("appending <")
+            mrzCode+="<";
+        }
+    }
 
     console.log("mrzCode length", mrzCode.length)
     if(mrzCode.length === 88) {

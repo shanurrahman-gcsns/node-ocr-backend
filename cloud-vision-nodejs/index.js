@@ -19,12 +19,10 @@ var app = express();
 
 
 app.use(express.static(path.join(__dirname, "/public")));
-app.get('/passport', function(req, res) {
-  res.sendFile("index.html");
-});
 
-app.post('/passport/upload', upload.single('image'), async function(req, res, next) {
+app.post('/upload', upload.single('image'), async function(req, res, next) {
   
+    const {initiatePostTimeout} = req.query;
     const client = new vision.ImageAnnotatorClient({
       keyFilename: 'secrets.json'
     });
@@ -39,18 +37,25 @@ app.post('/passport/upload', upload.single('image'), async function(req, res, ne
     const mrzCode = mrz.extractMrzCode(description);
 
     try{
-      let rst = mrz.runner(mrzCode);
+      let rst = mrz.runner(mrzCode, initiatePostTimeout);
       try{
         const similarDocumentsDict = findSimilarity(rst, result.fullTextAnnotation.text);
         rst = replaceSimilar(rst, similarDocumentsDict);
       }catch(e){
         console.log("similarity error", e.message);
       }
+
+
+      console.log(rst);
       return res.status(200).send(rst);
     }catch(e){
       console.log(mrzCode, e.message);
       return res.status(500).send({error: e.message, mrzCode});
     }
+});
+
+app.get('/', function(req, res) {
+  res.sendFile("index.html");
 });
 
 
