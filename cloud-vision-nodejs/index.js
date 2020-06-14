@@ -18,9 +18,9 @@ const replaceSimilar = require('./replaceSimilar');
 var app = express();
 
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "/public")));
 app.get('/passport', function(req, res) {
-  res.sendFile("public/index.html", { root: __dirname });
+  res.sendFile("index.html");
 });
 
 app.post('/passport/upload', upload.single('image'), async function(req, res, next) {
