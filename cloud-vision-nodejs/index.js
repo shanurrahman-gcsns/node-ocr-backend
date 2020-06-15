@@ -30,11 +30,18 @@ app.post('/upload', upload.single('image'), async function(req, res, next) {
     const [result] = await client.textDetection(path.join(__dirname, 'uploads', req.file.filename));
     // fs.writeFileSync('output.json', JSON.stringify(result));
   
+    let mrzCode = "";
     if(!result.fullTextAnnotation) {
       return res.status(500).send({error: "No text block found", result});
     }
     const description = result.fullTextAnnotation.text;
-    const mrzCode = mrz.extractMrzCode(description);
+    try{
+      mrzCode = mrz.extractMrzCode(description, res);
+    }catch(e) {
+      console.log(e)
+      return res.status(500).send(e);
+    }
+    
 
     try{
       let rst = mrz.runner(mrzCode, initiatePostTimeout);

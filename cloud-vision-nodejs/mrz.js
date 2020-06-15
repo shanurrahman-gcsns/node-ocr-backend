@@ -1,9 +1,27 @@
 const parse = require('mrz').parse;
 
 
-const extractMrzCode = (description) => {
+
+const testForErrors = (mrzCode, res) => {
+    if(!mrzCode.startsWith("P<")) {
+        throw new Error("Doesnot start with valid symbol");
+    }
+    if(!mrzCode.slice(0, 44).match(/<<[A-Z]+/g)) {
+        throw new Error("Doesnot match pattern for line 1");
+    }
+}
+
+
+
+
+
+
+const extractMrzCode = (description, res) => {
     const start = description.indexOf("P<");
     let mrzCode = description.slice(start).trim().replace(/\s/g, "");
+
+    console.log(mrzCode)
+    testForErrors(mrzCode, res);
 
     return mrzCode;
 };
