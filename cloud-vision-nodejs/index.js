@@ -53,8 +53,14 @@ app.post('/upload', upload.single('image'), async function(req, res, next) {
       }
 
 
-      console.log(rst);
-      return res.status(200).send(rst);
+      if(!initiatePostTimeout) {
+        console.log(rst);
+        return res.status(200).send(rst);
+      }else if(mrz.parsedDocumentsChecksumDigitsCheck(rst)){
+        return res.status(200).send(rst)
+      }else{
+        res.status(400).send({error: "did not match the pattern in post timeout"});
+      }
     }catch(e){
       console.log(mrzCode, e.message);
       return res.status(500).send({error: e.message, mrzCode});

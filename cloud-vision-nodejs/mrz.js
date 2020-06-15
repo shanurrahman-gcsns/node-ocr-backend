@@ -2,6 +2,19 @@ const parse = require('mrz').parse;
 
 
 
+
+const parsedDocumentsChecksumDigitsCheck = (parsedDocument) => {
+    const details = parsedDocument.details;
+    for(let detail of details) {
+        if(detail.field === 'documentNumberCheckDigit' && !detail.valid) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
 const testForErrors = (mrzCode, res) => {
     if(!mrzCode.startsWith("P<")) {
         throw new Error("Doesnot start with valid symbol");
@@ -10,10 +23,6 @@ const testForErrors = (mrzCode, res) => {
         throw new Error("Doesnot match pattern for line 1");
     }
 }
-
-
-
-
 
 
 const extractMrzCode = (description, res) => {
@@ -50,6 +59,6 @@ const runner = (mrzCode, initiatePostTimeout) => {
 }
 
 
-const mrz = {extractMrzCode, runner};
+const mrz = {extractMrzCode, runner, parsedDocumentsChecksumDigitsCheck};
 
 module.exports = mrz;
