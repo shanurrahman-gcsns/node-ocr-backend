@@ -52,6 +52,8 @@ const runner = (mrzCode, initiatePostTimeout) => {
         lines = mrzCode.match(/.{1,44}/g)
     }else if(mrzCode.length === 90) {
         lines = mrzCode.match(/.{1, 30}/g)
+    }else{
+        throw new Error("Lines dont match the required length");
     }
 
     let result = parse(lines);
