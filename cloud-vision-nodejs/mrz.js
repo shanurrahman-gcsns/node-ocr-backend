@@ -29,7 +29,9 @@ const extractMrzCode = (description, res) => {
     const start = description.indexOf("P<");
     let mrzCode = description.slice(start).trim().replace(/\s/g, "");
 
-    console.log(mrzCode)
+    if(mrzCode.length > 88) {
+        mrzCode = mrzCode.slice(0, 88);
+    }
     testForErrors(mrzCode, res);
 
     return mrzCode;
