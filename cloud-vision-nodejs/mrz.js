@@ -27,7 +27,10 @@ const testForErrors = (mrzCode, res) => {
 
 const extractMrzCode = (description, res) => {
     const start = description.indexOf("P<");
-    let mrzCode = description.slice(start).trim().replace(/\s/g, "").replace("/«/g", "<<");
+    let mrzCode = description.slice(start).trim().replace(/\s/g, "")
+        .replace(/«/g, "<<")
+        .replace(/くく/g, "<<")
+        .replace(/>>/g, "<<");
     if(mrzCode.length > 88) {
         mrzCode = mrzCode.slice(0, 88);
     }
