@@ -19,7 +19,7 @@ const testForErrors = (mrzCode, res) => {
     if(!mrzCode.startsWith("P<")) {
         throw new Error("Doesnot start with valid symbol");
     }
-    if(!mrzCode.slice(0, 44).match(/<<[A-Z]+/g)) {
+    if(!mrzCode.slice(0, 44).match(/P<[A-Za-z]+<<[A-Za-z]+/g)) {
         throw new Error("Doesnot match pattern for line 1");
     }
 }
@@ -39,7 +39,7 @@ const extractMrzCode = (description, res) => {
 const runner = (mrzCode, initiatePostTimeout) => {
     let lines = [];
 
-    if(initiatePostTimeout && mrzCode.length >=86) {
+    if(initiatePostTimeout==false && mrzCode.length >=86) {
         console.log("in post timeout");
         while(mrzCode.length < 88) {
             console.log("appending <")
