@@ -1,3 +1,5 @@
+const { parse } = require("mrz");
+
 const replaceSimilar = (parsedValue, dictionary) => {
     parsedValue.details.forEach(detail=>{
         if(dictionary[detail.value]) {
@@ -13,6 +15,7 @@ const replaceSimilar = (parsedValue, dictionary) => {
               dictionary[detail.value].trim().length
             ) {
               detail.value = dictionary[detail.value];
+              detail.value.replace(parsedValue.fields.firstname)
             }
         }
     })
