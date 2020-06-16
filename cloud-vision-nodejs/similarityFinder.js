@@ -18,7 +18,7 @@ const findSimilarity = (extractedDocs, fulltext) => {
         const simi = stringSimilarity.findBestMatch(document, bag);
 
 
-        if(simi.bestMatch.rating > 0.6) {
+        if(simi.bestMatch.rating > 0.7) {
             dict[document] = simi.bestMatch.target;
         }
     })
