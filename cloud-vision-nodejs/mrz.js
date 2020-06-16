@@ -19,9 +19,9 @@ const testForErrors = (mrzCode, res) => {
     if(!mrzCode.startsWith("P<")) {
         throw new Error("Doesnot start with valid symbol");
     }
-    if(!mrzCode.slice(0, 44).match(/P<[A-Za-z]+<<[A-Za-z]+/g)) {
-        throw new Error("Doesnot match pattern for line 1");
-    }
+    // if(!mrzCode.slice(0, 44).match(/P<[A-Za-z]+<<([A-Za-z]+[<])*[A-Z]*/g)) {
+    //     throw new Error("Doesnot match pattern for line 1");
+    // }
 }
 
 

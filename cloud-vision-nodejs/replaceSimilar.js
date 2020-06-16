@@ -1,11 +1,18 @@
 const replaceSimilar = (parsedValue, dictionary) => {
     parsedValue.details.forEach(detail=>{
         if(dictionary[detail.value]) {
-            if(!detail.value || dictionary.value) {
-                return
-            }
-            if(detail.value.trim().length> dictionary[detail.value].trim().length){
-                detail.value = dictionary[detail.value];
+            // we are only interested in replacing lastname if it is greater than something
+            if (
+              !detail.value ||
+              dictionary.value ||
+              !detail.field === "lastName"
+            ) {
+              return;
+            } else if (
+              detail.value.trim().length <
+              dictionary[detail.value].trim().length
+            ) {
+              detail.value = dictionary[detail.value];
             }
         }
     })
