@@ -52,13 +52,14 @@ app.post('/upload', upload.single('image'), async function(req, res, next) {
         console.log("similarity error", e.message);
       }
 
+      const faces = await detectFaces(path.join(__dirname, 'uploads', req.file.filename))
 
       if(!initiatePostTimeout) {
         console.log(rst);
         return res.status(200).send(rst);
       }else if(true || mrz.parsedDocumentsChecksumDigitsCheck(rst)){
         // maybe the documents provided for testing have incorrect values
-        return res.status(200).send(rst)
+        return res.status(200).send({...rst, faces});
       }else{
         console.log("Didnot match pattern in post timeout");
         res.status(400).send({error: "did not match the pattern in post timeout"});
@@ -68,6 +69,20 @@ app.post('/upload', upload.single('image'), async function(req, res, next) {
       return res.status(500).send({error: e.message, mrzCode});
     }
 });
+
+
+async function detectFaces(inputFile) {
+  const client = new vision.ImageAnnotatorClient({keyFilename: 'secrets.json'});
+  // Make a call to the Vision API to detect the faces
+  const request = {image: {source: {filename: inputFile}}};
+  const results = await client.faceDetection(request);
+  const faces = results[0].faceAnnotations;
+  const numFaces = faces.length;
+  console.log(`Found ${numFaces} face${numFaces === 1 ? '' : 's'}.`);
+  return faces;
+}
+
+
 
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, "public", "index.html"));
