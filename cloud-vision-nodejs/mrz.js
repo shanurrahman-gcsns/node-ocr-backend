@@ -30,8 +30,8 @@ const extractMrzCode = (description, res) => {
   let untrimmedCode = description.slice(start).trim().replace(/\s/g, "");
   let mrzCode = untrimmedCode
     .replace(/«/g, "<<")
-    .replace(/くく/g, "<<")
-    .replace(/>>/g, "<<");
+    .replace(/く/g, "<")
+    .replace(/>/g, "<");
 
   console.log({ untrimmedCode }, { mrzCode });
   if (mrzCode.length > 88) {
