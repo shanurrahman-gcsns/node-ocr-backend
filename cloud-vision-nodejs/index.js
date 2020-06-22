@@ -14,6 +14,7 @@ const path = require('path');
 
 const vision = require("@google-cloud/vision");
 const replaceSimilar = require('./replaceSimilar');
+const emiratesProcessor = require('./emiratesIdProcessor');
 
 var app = express();
 
@@ -28,13 +29,21 @@ app.post('/upload', upload.single('image'), async function(req, res, next) {
     });
   
     const [result] = await client.textDetection(path.join(__dirname, 'uploads', req.file.filename));
-    // fs.writeFileSync('output.json', JSON.stringify(result));
-  
-    let mrzCode = "";
     if(!result.fullTextAnnotation) {
       return res.status(500).send({error: "No text block found", result});
     }
     const description = result.fullTextAnnotation.text;
+
+    passportProcessor(res, description, initiatePostTimeout);
+    emiratesProcessor(res, description, initiatePostTimeout);
+    
+});
+
+
+
+const passportProcessor = async(res, description) => {
+  let mrzCode = "";
+
     try{
       mrzCode = mrz.extractMrzCode(description, res);
     }catch(e) {
@@ -68,8 +77,7 @@ app.post('/upload', upload.single('image'), async function(req, res, next) {
       console.log(mrzCode, e.message);
       return res.status(500).send({error: e.message, mrzCode});
     }
-});
-
+}
 
 async function detectFaces(inputFile) {
   const client = new vision.ImageAnnotatorClient({keyFilename: 'secrets.json'});
