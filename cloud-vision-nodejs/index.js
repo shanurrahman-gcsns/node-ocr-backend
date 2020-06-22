@@ -23,7 +23,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.post('/upload', upload.single('image'), async function(req, res, next) {
   
-    const {initiatePostTimeout} = req.query;
+    const {initiatePostTimeout, documentType} = req.query;
     const client = new vision.ImageAnnotatorClient({
       keyFilename: 'secrets.json'
     });
@@ -34,14 +34,17 @@ app.post('/upload', upload.single('image'), async function(req, res, next) {
     }
     const description = result.fullTextAnnotation.text;
 
-    passportProcessor(res, description, initiatePostTimeout);
-    emiratesProcessor(res, description, initiatePostTimeout);
-    
+    if(documentType === 'nationalId') {
+      emiratesProcessor(res, description, initiatePostTimeout);
+    }
+    else {
+      passportProcessor(req, res, description, initiatePostTimeout);
+    }
 });
 
 
 
-const passportProcessor = async(res, description) => {
+const passportProcessor = async(req, res, description, initiatePostTimeout) => {
   let mrzCode = "";
 
     try{
@@ -55,7 +58,7 @@ const passportProcessor = async(res, description) => {
     try{
       let rst = mrz.runner(mrzCode, initiatePostTimeout);
       try{
-        const similarDocumentsDict = findSimilarity(rst, result.fullTextAnnotation.text);
+        const similarDocumentsDict = findSimilarity(rst, description);
         rst = replaceSimilar(rst, similarDocumentsDict);
       }catch(e){
         console.log("similarity error", e.message);
