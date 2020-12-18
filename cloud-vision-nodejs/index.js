@@ -14,6 +14,7 @@ const path = require('path');
 
 const vision = require("@google-cloud/vision");
 const replaceSimilar = require('./replaceSimilar');
+const { parse } = require('mrz');
 
 var app = express();
 
@@ -35,6 +36,38 @@ app.post('/upload', upload.single('image'), async function(req, res, next) {
       return res.status(500).send({error: "No text block found", result});
     }
     const description = result.fullTextAnnotation.text;
+
+
+    // this testSlices logic doesnot care about <P 
+    let testSlices = description.split("\n");
+    testSlices = testSlices.filter((t)=>t.length >=25).filter(t=>t.indexOf("<<")>0);
+
+    const formattedSlices = [];
+    if(testSlices.length == 2) {
+      testSlices.forEach(slice=>{
+        slice.length>44 && slice.replace(/ /g, "")
+        if(slice.length<44) {
+          while(slice.length<44) {
+            slice += '<';
+          }
+        }
+        formattedSlices.push(slice);
+      });
+      const result = parse(formattedSlices);
+      return res.status(200).send(result);
+    }else if(testSlices.length === 3) {
+      testSlices.forEach(slice=>{
+        slice.length>30 && slice.replace(/ /g, "")
+        if(slice.length<30) {
+          while(slice.length<30) {
+            slice += '<';
+          }
+        }
+        formattedSlices.push(slice);
+      });
+      const result = parse(formattedSlices);
+      return res.status(200).send(result);
+    }
     try{
       mrzCode = mrz.extractMrzCode(description, res);
     }catch(e) {
@@ -45,6 +78,7 @@ app.post('/upload', upload.single('image'), async function(req, res, next) {
 
     try{
       let rst = mrz.runner(mrzCode, initiatePostTimeout);
+      // let rst = mrz.runner(mrzCode, true);
       try{
         const similarDocumentsDict = findSimilarity(rst, result.fullTextAnnotation.text);
         rst = replaceSimilar(rst, similarDocumentsDict);

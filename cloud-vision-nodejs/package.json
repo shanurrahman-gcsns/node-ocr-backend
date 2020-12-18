@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js"
   },
-  "author": "Sandeep Dinesh",
+  "author": "Shanur",
   "dependencies": {
     "@google-cloud/vision": "^2.0.0",
     "@lukesolo/mrz": "^3.1.1",

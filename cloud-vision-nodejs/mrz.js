@@ -14,17 +14,6 @@ const parsedDocumentsChecksumDigitsCheck = (parsedDocument) => {
     return true;
 }
 
-
-const testForErrors = (mrzCode, res) => {
-    if(!mrzCode.startsWith("P<")) {
-        throw new Error("Doesnot start with valid symbol");
-    }
-    // if(!mrzCode.slice(0, 44).match(/P<[A-Za-z]+<<([A-Za-z]+[<])*[A-Z]*/g)) {
-    //     throw new Error("Doesnot match pattern for line 1");
-    // }
-}
-
-
 const extractMrzCode = (description, res) => {
   const start = description.indexOf("P<");
   let untrimmedCode = description.slice(start).trim().replace(/\s/g, "");
@@ -37,7 +26,6 @@ const extractMrzCode = (description, res) => {
   if (mrzCode.length > 88) {
     mrzCode = mrzCode.slice(0, 88);
   }
-  testForErrors(mrzCode, res);
 
   return mrzCode;
 };
@@ -54,7 +42,7 @@ const runner = (mrzCode, initiatePostTimeout) => {
         }
     }
 
-    console.log("mrzCode length", mrzCode.length)
+    console.log({mrzCode})
     if(mrzCode.length === 88) {
         lines = mrzCode.match(/.{1,44}/g)
     }else if(mrzCode.length === 90) {
